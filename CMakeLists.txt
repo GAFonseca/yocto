@@ -67,10 +67,10 @@ find_package(catkin REQUIRED COMPONENTS
 # )
 
 ## Generate added messages and services with any dependencies listed here
-# generate_messages(
-#   DEPENDENCIES
-#   std_msgs
-# )
+ generate_messages(
+   DEPENDENCIES
+   std_msgs
+ )
 
 ###################################
 ## catkin specific configuration ##
@@ -81,9 +81,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## LIBRARIES: libraries you create in this project that dependent projects also need
 ## CATKIN_DEPENDS: catkin_packages dependent projects also need
 ## DEPENDS: system dependencies of this project that dependent projects also need
+
 catkin_package(
 #  INCLUDE_DIRS include
-#  LIBRARIES ros_pololu_servo
+#  LIBRARIES yocto
   CATKIN_DEPENDS roscpp rospy std_msgs message_runtime actionlib_msgs
 #  DEPENDS system_lib
 )
@@ -111,9 +112,6 @@ link_directories( /usr/local/lib )
  add_library(yocto
    src/yocto/yocto_api.cpp
    src/yocto/yocto_pwminput.cpp
-   src/yocto/yapi/yapi.c
-   src/yocto/yapi/yjson.c
-   
 )
 
 ## Declare a cpp executable
@@ -130,9 +128,18 @@ link_directories( /usr/local/lib )
 #   ${catkin_LIBRARIES}
 # )
 
+target_link_libraries(yocto
+   ${catkin_LIBRARIES}
+ )
+
+
 add_executable(yocto_PWM src/yocto_PWM_node.cpp)
 target_link_libraries(yocto_PWM ${catkin_LIBRARIES})
 add_dependencies(yocto_PWM ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(yocto_PWM
+   ${catkin_LIBRARIES}
+)
 
 #############
 ## Install ##

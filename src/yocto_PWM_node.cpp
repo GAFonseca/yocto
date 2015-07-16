@@ -8,6 +8,9 @@
 /**
  * Código para a publicação de mensagens do tipo yocto/PWM_info no tópico /yocto/pwm_info
  */
+
+using namespace std;
+
 int clean_stdin()
 {
     while (getchar()!='\n');
@@ -57,18 +60,65 @@ int main(int argc, char **argv)
     ros::Rate loop_rate(10);
 
 
-    int channel=0;         
-    double duty_Cycle=0.0;
-    double frequency=0.0;
+    int channel=1;         
+    double duty_Cycle=70.589;
+    double frequency=1.507;
+
+    string       errmsg;
+    string       target;
+    YPwmInput   *pwm;
+    YPwmInput   *pwm1;
+    YPwmInput   *pwm2;
+    YModule     *m;
+
+    YAPI::DisableExceptions();
+
+    // Setup the API to use local USB devices
+    if (YAPI::RegisterHub("usb", errmsg) != YAPI_SUCCESS) {
+        cerr << "RegisterHub error: " << errmsg << endl;
+        return 1;
+    }
+
+    // retreive any pwm input available
+    pwm = YPwmInput::FirstPwmInput();
+    if (pwm == NULL) {
+        cerr << "No module connected (Check cable)" << endl;
+        exit(1);
+    }
+
+    // we need to retreive both channels from the device.
+    if (pwm->isOnline()) {
+        m = pwm->get_module();
+        pwm1 = YPwmInput::FindPwmInput(m->get_serialNumber() + ".pwmInput1");
+        pwm2 = YPwmInput::FindPwmInput(m->get_serialNumber() + ".pwmInput2");
+    } else {
+            cerr << "No module connected (Check cable)" << endl;
+            exit(1);
+    }
+
+
+
 
 
     yocto::PWM_info mtr;     //objeto da mensagem que será publicada
     while (ros::ok())
     {
-        
         mtr.channel_nmbr = 1;
-        mtr.frequency = 70.589;
-        mtr.duty_cycle= 1.507;
+        mtr.frequency = pwm1->get_frequency();
+        mtr.duty_cycle= pwm1->get_dutyCycle();
+        frequency =     pwm2->get_frequency();
+        duty_Cycle =    pwm2->get_dutyCycle();
+
+
+        pub.publish(mtr);
+        ros::spinOnce();
+        loop_rate.sleep();
+
+
+
+        mtr.channel_nmbr = 2;
+        mtr.frequency = frequency;
+        mtr.duty_cycle= duty_Cycle;
         ROS_INFO("Node yocto rodando \n");
         /**
         * The publish() function is how you send messages. The parameter
