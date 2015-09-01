@@ -9,7 +9,11 @@ find_package(catkin REQUIRED COMPONENTS
   rospy
   std_msgs
   message_generation
+  genmsg
 )
+find_package(PkgConfig REQUIRED)
+pkg_search_module(LIBUSB1 REQUIRED libusb-1.0)
+include_directories(SYSTEM ${LIBUSB1_INCLUDE_DIRS})
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -83,10 +87,10 @@ find_package(catkin REQUIRED COMPONENTS
 ## DEPENDS: system dependencies of this project that dependent projects also need
 
 catkin_package(
-#  INCLUDE_DIRS include
-#  LIBRARIES yocto
+  INCLUDE_DIRS include
+  LIBRARIES yocto
   CATKIN_DEPENDS roscpp rospy std_msgs message_runtime actionlib_msgs
-#  DEPENDS system_lib
+  DEPENDS system_lib
 )
 
 
@@ -105,10 +109,26 @@ include_directories(
 link_directories( /usr/local/lib )
 
 ## Declare a cpp library
-# add_library(yocto
-#   src/${PROJECT_NAME}/yocto.cpp
-# )
 
+add_library(yoctoapi
+	src/yocto/yapi/yapi.c
+	src/yocto/yapi/yapi.def
+	src/yocto/yapi/ydef.h
+	src/yocto/yapi/yfifo.c
+	src/yocto/yapi/yhash.c
+	src/yocto/yapi/yjson.c
+	src/yocto/yapi/ykey.c
+	src/yocto/yapi/ymemory.c
+	src/yocto/yapi/ypkt_lin.c
+	src/yocto/yapi/ypkt_osx.c
+	src/yocto/yapi/ypkt_win.c
+	src/yocto/yapi/yprog.c
+	src/yocto/yapi/yproto.h
+	src/yocto/yapi/ystream.c
+	src/yocto/yapi/ytcp.c
+	src/yocto/yapi/ythread.c
+	src/yocto/yapi/yversion.h
+)
  add_library(yocto
    src/yocto/yocto_api.cpp
    src/yocto/yocto_pwminput.cpp
@@ -130,16 +150,21 @@ link_directories( /usr/local/lib )
 
 target_link_libraries(yocto
    ${catkin_LIBRARIES}
+   ${LIBUSB_1_LIBRARIES}
+   yoctoapi
  )
 
 
 add_executable(yocto_PWM src/yocto_PWM_node.cpp)
-target_link_libraries(yocto_PWM ${catkin_LIBRARIES})
-add_dependencies(yocto_PWM ${catkin_EXPORTED_TARGETS})
-
 target_link_libraries(yocto_PWM
    ${catkin_LIBRARIES}
+   ${LIBUSB_1_LIBRARIES}
+	yocto
+	yoctoapi
 )
+
+add_dependencies(yocto_PWM ${catkin_EXPORTED_TARGETS})
+
 
 #############
 ## Install ##

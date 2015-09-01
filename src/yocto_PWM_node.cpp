@@ -109,11 +109,9 @@ int main(int argc, char **argv)
         frequency =     pwm2->get_frequency();
         duty_Cycle =    pwm2->get_dutyCycle();
 
-
         pub.publish(mtr);
         ros::spinOnce();
         loop_rate.sleep();
-
 
 
         mtr.channel_nmbr = 2;
