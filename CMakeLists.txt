@@ -11,9 +11,12 @@ find_package(catkin REQUIRED COMPONENTS
   message_generation
   genmsg
 )
+
 find_package(PkgConfig REQUIRED)
-pkg_search_module(LIBUSB1 REQUIRED libusb-1.0)
-include_directories(SYSTEM ${LIBUSB1_INCLUDE_DIRS})
+#find_package(libusb-1.0 REQUIRED)
+include_directories (${LIBUSB_1_INCLUDE_DIRS})
+pkg_search_module(LIBUSB_1 REQUIRED libusb-1.0)
+include_directories(SYSTEM ${LIBUSB_1_INCLUDE_DIRS})
 
 ## System dependencies are found with CMake's conventions
 # find_package(Boost REQUIRED COMPONENTS system)
@@ -87,10 +90,10 @@ include_directories(SYSTEM ${LIBUSB1_INCLUDE_DIRS})
 ## DEPENDS: system dependencies of this project that dependent projects also need
 
 catkin_package(
-  INCLUDE_DIRS include
-  LIBRARIES yocto
+#  INCLUDE_DIRS include
+#  LIBRARIES yocto
   CATKIN_DEPENDS roscpp rospy std_msgs message_runtime actionlib_msgs
-  DEPENDS system_lib
+#  DEPENDS system_lib
 )
 
 
@@ -107,7 +110,12 @@ include_directories(
 )
 
 link_directories( /usr/local/lib )
+link_directories( /usr/local/include )
 
+#add_library(libm)
+#add_library(libpthread)
+#add_library(libusb1.0)
+#add_library(libstdc++)
 ## Declare a cpp library
 
 add_library(yoctoapi
@@ -154,13 +162,19 @@ target_link_libraries(yocto
    yoctoapi
  )
 
+target_link_libraries(yoctoapi
+   ${catkin_LIBRARIES}
+   ${LIBUSB_1_LIBRARIES}
+ )
+
+
 
 add_executable(yocto_PWM src/yocto_PWM_node.cpp)
+
 target_link_libraries(yocto_PWM
    ${catkin_LIBRARIES}
    ${LIBUSB_1_LIBRARIES}
 	yocto
-	yoctoapi
 )
 
 add_dependencies(yocto_PWM ${catkin_EXPORTED_TARGETS})
