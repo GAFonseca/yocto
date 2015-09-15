@@ -110,6 +110,11 @@ int main(int argc, char **argv)
         frequency =     pwm2->get_frequency();
         duty_Cycle =    pwm2->get_dutyCycle();
 
+        ROS_INFO("Node yocto rodando!\n");
+        ROS_INFO("Channel:          %d\n", mtr.channel_nmbr);
+        ROS_INFO("Frequendy:        %f\n", mtr.frequency);
+        ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle);
+
         pub.publish(mtr);
         ros::spinOnce();
         loop_rate.sleep();
@@ -118,7 +123,10 @@ int main(int argc, char **argv)
         mtr.channel_nmbr = 2;
         mtr.frequency = frequency;
         mtr.duty_cycle= duty_Cycle;
-        ROS_INFO("Node yocto rodando \n");
+        ROS_INFO("Channel:          %d\n", mtr.channel_nmbr);
+        ROS_INFO("Frequendy:        %f\n", mtr.frequency);
+        ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle);
+        ROS_INFO("-----------------------------------\n");
         /**
         * The publish() function is how you send messages. The parameter
         * is the message object. The type of this object must agree with the type
