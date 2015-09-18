@@ -60,19 +60,19 @@ int main(int argc, char **argv)
 
     ros::Rate loop_rate(10);
 
-
-    int channel=1;         
-    double duty_Cycle=70.589;
-    double frequency=1.507;
-
     string       errmsg;
-    string       target;
+    string       target1 = "YPWMRX01-37171";
+    string       target2 = "YPWMRX01-43C43";
     YPwmInput   *pwm;
     YPwmInput   *pwm1;
     YPwmInput   *pwm2;
+    YPwmInput   *pwm3;
+    YPwmInput   *pwm4;
     YModule     *m;
 
     YAPI::DisableExceptions();
+
+     ROS_INFO("Node yocto rodando!\n");
 
     // Setup the API to use local USB devices
     if (YAPI::RegisterHub("usb", errmsg) != YAPI_SUCCESS) {
@@ -81,7 +81,7 @@ int main(int argc, char **argv)
     }
 
     // retreive any pwm input available
-    pwm = YPwmInput::FirstPwmInput();
+    pwm = YPwmInput::FindPwmInput(target1 + ".pwmInput1");
     if (pwm == NULL) {
         cerr << "No module connected (Check cable)" << endl;
         exit(1);
@@ -98,34 +98,48 @@ int main(int argc, char **argv)
     }
 
 
+    pwm = YPwmInput::FindPwmInput(target2 + ".pwmInput1");
+    if (pwm == NULL) {
+        cerr << "No module connected (Check cable)" << endl;
+        exit(1);
+    }
+
+    // we need to retreive both channels from the device.
+    if (pwm->isOnline()) {
+        m = pwm->get_module();
+        pwm3 = YPwmInput::FindPwmInput(m->get_serialNumber() + ".pwmInput1");
+        pwm4 = YPwmInput::FindPwmInput(m->get_serialNumber() + ".pwmInput2");
+    } else {
+            cerr << "No module connected (Check cable)" << endl;
+            exit(1);
+    }
+
+
 
 
 
     yocto::PWM_info mtr;     //objeto da mensagem que será publicada
     while (ros::ok())
     {
-        mtr.channel_nmbr = 1;
-        mtr.frequency = pwm1->get_frequency();
-        mtr.duty_cycle= pwm1->get_dutyCycle();
-        frequency =     pwm2->get_frequency();
-        duty_Cycle =    pwm2->get_dutyCycle();
-
-        ROS_INFO("Node yocto rodando!\n");
-        ROS_INFO("Channel:          %d\n", mtr.channel_nmbr);
-        ROS_INFO("Frequendy:        %f\n", mtr.frequency);
-        ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle);
-
-        pub.publish(mtr);
-        ros::spinOnce();
-        loop_rate.sleep();
+        
+        mtr.frequency_1     = pwm1->get_frequency();
+        mtr.duty_cycle_1    = pwm1->get_dutyCycle();
+        mtr.frequency_2     = pwm2->get_frequency();
+        mtr.duty_cycle_2    = pwm2->get_dutyCycle();
+        mtr.frequency_3     = pwm3->get_frequency();
+        mtr.duty_cycle_3    = pwm3->get_dutyCycle();
+        mtr.frequency_4     = pwm4->get_frequency();
+        mtr.duty_cycle_4    = pwm4->get_dutyCycle();
 
 
-        mtr.channel_nmbr = 2;
-        mtr.frequency = frequency;
-        mtr.duty_cycle= duty_Cycle;
-        ROS_INFO("Channel:          %d\n", mtr.channel_nmbr);
-        ROS_INFO("Frequendy:        %f\n", mtr.frequency);
-        ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle);
+        ROS_INFO("Frequency:        %f\n", mtr.frequency_1);
+        ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle_1);
+        ROS_INFO("Frequency:        %f\n", mtr.frequency_2);
+        ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle_2);
+        ROS_INFO("Frequency:        %f\n", mtr.frequency_3);
+        ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle_3);
+        ROS_INFO("Frequency:        %f\n", mtr.frequency_4);
+        ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle_4);
         ROS_INFO("-----------------------------------\n");
         /**
         * The publish() function is how you send messages. The parameter
