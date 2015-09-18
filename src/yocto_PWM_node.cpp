@@ -72,7 +72,7 @@ int main(int argc, char **argv)
 
     YAPI::DisableExceptions();
 
-     ROS_INFO("Node yocto rodando!\n");
+        // ROS_INFO("Node yocto rodando!\n");
 
     // Setup the API to use local USB devices
     if (YAPI::RegisterHub("usb", errmsg) != YAPI_SUCCESS) {
@@ -132,15 +132,17 @@ int main(int argc, char **argv)
         mtr.duty_cycle_4    = pwm4->get_dutyCycle();
 
 
-        ROS_INFO("Frequency:        %f\n", mtr.frequency_1);
-        ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle_1);
-        ROS_INFO("Frequency:        %f\n", mtr.frequency_2);
-        ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle_2);
-        ROS_INFO("Frequency:        %f\n", mtr.frequency_3);
-        ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle_3);
-        ROS_INFO("Frequency:        %f\n", mtr.frequency_4);
-        ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle_4);
-        ROS_INFO("-----------------------------------\n");
+        // ROS_INFO("Frequency:        %f\n", mtr.frequency_1);
+        // ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle_1);
+        // ROS_INFO("Frequency:        %f\n", mtr.frequency_2);
+        // ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle_2);
+        // ROS_INFO("Frequency:        %f\n", mtr.frequency_3);
+        // ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle_3);
+        // ROS_INFO("Frequency:        %f\n", mtr.frequency_4);
+        // ROS_INFO("Duty Cycle:       %f\n", mtr.duty_cycle_4);
+        // ROS_INFO("-----------------------------------\n");
+    
+
         /**
         * The publish() function is how you send messages. The parameter
         * is the message object. The type of this object must agree with the type
